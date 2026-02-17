@@ -2,8 +2,7 @@
   ==============================================================================
 
     WaveformDisplay.cpp
-    Created: 14 Mar 2020 3:50:16pm
-    Author:  matthew
+    Author:  Chandrasekaran Akhshayaa
 
   ==============================================================================
 */
@@ -63,12 +62,7 @@ void WaveformDisplay::loadURL(URL audioURL)
     fileLoaded = audioThumb.setSource(new URLInputSource(audioURL));
     if (fileLoaded)
     {
-        std::cout << "wfd: loaded! " << std::endl;
         repaint();
-    }
-    else
-    {
-        std::cout << "wfd: not loaded! " << std::endl;
     }
 }
 

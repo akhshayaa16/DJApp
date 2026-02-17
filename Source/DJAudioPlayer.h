@@ -1,3 +1,12 @@
+/*
+  ==============================================================================
+
+    DJAudioPlayer.h
+    Author:  Chandrasekaran Akhshayaa
+
+  ==============================================================================
+*/
+
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"

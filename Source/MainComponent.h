@@ -1,7 +1,8 @@
 /*
   ==============================================================================
 
-    This file was auto-generated!
+    MainComponent.h
+    Author:  Chandrasekaran Akhshayaa
 
   ==============================================================================
 */
@@ -20,11 +21,16 @@ public:
     MainComponent();
     ~MainComponent() override;
 
+    /** Prepare both audio players and the mixer for playback */
     void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override;
+    /** Mix both deck audio sources into the output buffer */
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override;
+    /** Release audio resources for both players and the mixer */
     void releaseResources() override;
 
+    /** Fill the background with the application theme colour */
     void paint (Graphics& g) override;
+    /** Layout the two decks side-by-side with the playlist below */
     void resized() override;
 
 private:
