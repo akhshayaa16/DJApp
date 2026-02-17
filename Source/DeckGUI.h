@@ -12,22 +12,31 @@ class DeckGUI : public juce::Component,
                 public juce::Timer
 {
 public:
+    /** Create a deck GUI linked to the given audio player */
     DeckGUI(DJAudioPlayer* player,
             juce::AudioFormatManager& formatManagerToUse,
             juce::AudioThumbnailCache& cacheToUse);
     ~DeckGUI() override;
 
+    /** Draw the deck background and panels */
     void paint(juce::Graphics&) override;
+    /** Layout all child components within the available space */
     void resized() override;
 
+    /** Handle clicks on play, stop, load, hot cue and clear buttons */
     void buttonClicked(juce::Button*) override;
+    /** Handle changes to volume, speed, position and EQ sliders */
     void sliderValueChanged(juce::Slider* slider) override;
 
+    /** Return true if a single file is being dragged over the deck */
     bool isInterestedInFileDrag(const juce::StringArray& files) override;
+    /** Load the dropped file into this deck */
     void filesDropped(const juce::StringArray& files, int x, int y) override;
 
+    /** Update waveform position and BPM label periodically */
     void timerCallback() override;
 
+    /** Load an audio file into this deck, restoring its hot cues and EQ */
     void loadFile(juce::File file);
 
 private:

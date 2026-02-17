@@ -98,27 +98,41 @@ public:
     DJAudioPlayer(AudioFormatManager& _formatManager);
     ~DJAudioPlayer();
 
+    /** Prepare audio pipeline for playback */
     void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override;
+    /** Fill the audio buffer with the next block of samples, applying EQ */
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override;
+    /** Release audio resources when no longer needed */
     void releaseResources() override;
 
+    /** Load an audio file from a URL into the player */
     void loadURL(URL audioURL);
+    /** Set the playback volume (0.0 to 1.0) */
     void setGain(double gain);
+    /** Set the playback speed ratio (0.1 to 4.0, where 1.0 is normal) */
     void setSpeed(double ratio);
+    /** Set the playback position in seconds */
     void setPosition(double posInSecs);
+    /** Set the playback position as a fraction of total length (0.0 to 1.0) */
     void setPositionRelative(double pos);
 
+    /** Start audio playback */
     void start();
+    /** Stop audio playback */
     void stop();
 
+    /** Get the current playback position as a fraction (0.0 to 1.0) */
     double getPositionRelative();
+    /** Get the detected BPM of the loaded track (0.0 if unknown) */
     double getBpm() const { return bpm; }
-
+    /** Check whether audio is currently playing */
     bool isPlaying() const { return transportSource.isPlaying(); }
 
-    // EQ
+    /** Set the low-band EQ gain in dB (-24 to +24) */
     void setLowEQGainDb (float gainDb);
+    /** Set the mid-band EQ gain in dB (-24 to +24) */
     void setMidEQGainDb (float gainDb);
+    /** Set the high-band EQ gain in dB (-24 to +24) */
     void setHighEQGainDb(float gainDb);
 
 private:

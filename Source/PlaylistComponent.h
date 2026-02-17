@@ -23,19 +23,26 @@ class PlaylistComponent  : public juce::Component,
                             public Button::Listener
 {
 public:
+    /** Create the playlist, loading any previously saved library */
     PlaylistComponent(AudioFormatManager& formatManager);
+    /** Save the library to disk on destruction */
     ~PlaylistComponent() override;
 
+    /** Draw the playlist background */
     void paint (juce::Graphics&) override;
+    /** Layout the add button and track table */
     void resized() override;
 
+    /** Return the number of tracks in the playlist */
     int getNumRows() override;
+    /** Draw the background for a table row */
     void paintRowBackground(Graphics & g,
                             int rowNumber,
                             int width,
                             int height,
                             bool rowIsSelected) override;
 
+    /** Draw the text content of a table cell (name or duration) */
     void paintCell(Graphics & g,
                    int rowNumber,
                    int columnId,
@@ -43,11 +50,13 @@ public:
                    int height,
                    bool rowIsSelected) override;
 
+    /** Create or update the load-to-deck buttons in each row */
     Component* refreshComponentForCell(int rowNumber,
                                        int columnId,
                                        bool isRowSelected,
                                        Component *existingComponentToUpdate) override;
 
+    /** Handle add-tracks button and load-to-deck button clicks */
     void buttonClicked(Button * button) override;
 
     // R2B: MainComponent will set these callbacks

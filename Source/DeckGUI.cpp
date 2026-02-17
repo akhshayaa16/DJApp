@@ -499,11 +499,97 @@ void DeckGUI::updateHotCueButtonLabels()
 }
 
 // ==========================
-// SIMPLE STUB PERSISTENCE
+// HOT CUE PERSISTENCE (R3D)
 // ==========================
 
-void DeckGUI::loadHotCuesForCurrentTrack() {}
-void DeckGUI::saveHotCuesForCurrentTrack() {}
+File DeckGUI::getHotCuesFile()
+{
+    auto dir = File::getSpecialLocation(File::userApplicationDataDirectory)
+                    .getChildFile("Otodecks");
+    if (!dir.exists())
+        dir.createDirectory();
+    return dir.getChildFile("hotcues.json");
+}
+
+var DeckGUI::loadHotCuesJson()
+{
+    File f = getHotCuesFile();
+    if (!f.existsAsFile()) return var();
+    return JSON::parse(f.loadFileAsString());
+}
+
+void DeckGUI::saveHotCuesJson(var json)
+{
+    File f = getHotCuesFile();
+    f.replaceWithText(JSON::toString(json));
+}
+
+void DeckGUI::loadHotCuesForCurrentTrack()
+{
+    initHotCues();
+
+    if (loadedTrackPath.isEmpty()) return;
+
+    var root = loadHotCuesJson();
+    if (!root.isObject()) return;
+
+    auto* obj = root.getDynamicObject();
+    if (obj == nullptr) return;
+
+    var trackData = obj->getProperty(loadedTrackPath);
+    if (!trackData.isArray()) return;
+
+    auto* arr = trackData.getArray();
+    for (int i = 0; i < jmin(8, arr->size()); ++i)
+        hotCues[(size_t)i] = (double)(*arr)[i];
+
+    updateHotCueButtonLabels();
+}
+
+void DeckGUI::saveHotCuesForCurrentTrack()
+{
+    if (loadedTrackPath.isEmpty()) return;
+
+    var root = loadHotCuesJson();
+    if (!root.isObject())
+        root = var(new DynamicObject());
+
+    auto* obj = root.getDynamicObject();
+    if (obj == nullptr) return;
+
+    Array<var> arr;
+    for (int i = 0; i < 8; ++i)
+        arr.add(var(hotCues[(size_t)i]));
+
+    obj->setProperty(loadedTrackPath, var(arr));
+    saveHotCuesJson(root);
+}
+
+// ==========================
+// EQ PERSISTENCE (R4B)
+// ==========================
+
+File DeckGUI::getEQFile()
+{
+    auto dir = File::getSpecialLocation(File::userApplicationDataDirectory)
+                    .getChildFile("Otodecks");
+    if (!dir.exists())
+        dir.createDirectory();
+    return dir.getChildFile("eq.json");
+}
+
+var DeckGUI::loadEQJson()
+{
+    File f = getEQFile();
+    if (!f.existsAsFile()) return var();
+    return JSON::parse(f.loadFileAsString());
+}
+
+void DeckGUI::saveEQJson(var json)
+{
+    File f = getEQFile();
+    f.replaceWithText(JSON::toString(json));
+}
 
 void DeckGUI::applyEQToPlayer()
 {
@@ -514,7 +600,62 @@ void DeckGUI::applyEQToPlayer()
     player->setHighEQGainDb((float) highDb);
 }
 
-void DeckGUI::loadEQForCurrentTrack() {}
-void DeckGUI::saveEQForCurrentTrack() {}
+void DeckGUI::loadEQForCurrentTrack()
+{
+    lowDb  = 0.0;
+    midDb  = 0.0;
+    highDb = 0.0;
+
+    if (loadedTrackPath.isEmpty()) return;
+
+    var root = loadEQJson();
+    if (!root.isObject()) return;
+
+    auto* obj = root.getDynamicObject();
+    if (obj == nullptr) return;
+
+    var trackData = obj->getProperty(loadedTrackPath);
+    if (!trackData.isObject()) return;
+
+    auto* eq = trackData.getDynamicObject();
+    if (eq == nullptr) return;
+
+    lowDb  = (double) eq->getProperty("low");
+    midDb  = (double) eq->getProperty("mid");
+    highDb = (double) eq->getProperty("high");
+
+    originalLowDb  = (double) eq->getProperty("originalLow");
+    originalMidDb  = (double) eq->getProperty("originalMid");
+    originalHighDb = (double) eq->getProperty("originalHigh");
+
+    lowEQSlider.setValue(lowDb, dontSendNotification);
+    midEQSlider.setValue(midDb, dontSendNotification);
+    highEQSlider.setValue(highDb, dontSendNotification);
+
+    applyEQToPlayer();
+}
+
+void DeckGUI::saveEQForCurrentTrack()
+{
+    if (loadedTrackPath.isEmpty()) return;
+
+    var root = loadEQJson();
+    if (!root.isObject())
+        root = var(new DynamicObject());
+
+    auto* obj = root.getDynamicObject();
+    if (obj == nullptr) return;
+
+    DynamicObject::Ptr eq = new DynamicObject();
+    eq->setProperty("low",  lowDb);
+    eq->setProperty("mid",  midDb);
+    eq->setProperty("high", highDb);
+    eq->setProperty("originalLow",  originalLowDb);
+    eq->setProperty("originalMid",  originalMidDb);
+    eq->setProperty("originalHigh", originalHighDb);
+
+    obj->setProperty(loadedTrackPath, var(eq.get()));
+    saveEQJson(root);
+}
 
 

@@ -14,7 +14,8 @@
 class BPMDetector
 {
 public:
-    // Returns BPM (e.g. 128). Returns 0.0 if cannot estimate confidently.
+    /** Estimate BPM from an audio buffer using autocorrelation.
+        Returns 0.0 if the tempo cannot be determined. */
     static double detectBpmFromBuffer(const juce::AudioBuffer<float>& buffer,
                                      double sampleRate,
                                      double minBpm = 70.0,
