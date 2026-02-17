@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# Builds / artifacts
+Builds/
+build/
+cmake-build-*/
+Debug/
+Release/
+
+# Xcode user files
+*.xcuserstate
+xcuserdata/
+*.xcworkspace
+
+# JUCE generated code (optional — usually keep JuceLibraryCode)
+# JuceLibraryCode/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
